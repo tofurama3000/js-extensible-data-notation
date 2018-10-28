@@ -1,21 +1,16 @@
 import { parse } from './grammar';
-import { EdnTag, keyword, map, set, symbol, tag } from './types';
+import { keyword, map, set, symbol, tag } from './types';
+import { flatMap } from 'tofu-js/dist/arrays';
+import { isArray } from 'tofu-js/dist/is';
 
 export const Edn = {
   parse: (str: string) => processTokens(parse(str))
 };
 
-console.log(
-  JSON.stringify(
-    Edn.parse(`[hello world](12 23.4M 3N {1 3,
-     1 2 3 4} 12.3)#{3 4 3}#_ 4 "Hola" \\c
-     ; Comment
-     #inst "1985-04-12T23:20:50.52Z" #uuid "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"
-`)
-  )
-);
-
-function processTokens(tokens: any[]) {
+function processTokens(tokens: any[] | boolean) {
+  if (!isArray(tokens)) {
+    throw 'Invalid EDN string';
+  }
   return tokens.filter(t => t && t.type !== 'discard').map(processToken);
 }
 
@@ -41,9 +36,9 @@ function processToken(token: any): any {
     case 'vector':
       return processTokens(data);
     case 'set':
-      return set(data);
+      return set(processTokens(data));
     case 'map':
-      return map(data);
+      return map(flatMap(processTokens, data));
   }
   return null;
 }

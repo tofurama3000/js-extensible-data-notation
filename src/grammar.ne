@@ -1,9 +1,11 @@
 Main -> EDN null {% data => data[0] %}
 EDN -> Exp {% data => data[0] %}
 Exp -> (ElementSpace | ElementNoSpace) {% data => [].concat(...data[0]) %}
-_Exp -> _ Exp {% data => data[1] %}
+_Exp -> __exp | __char {% (data) => data[0] %}
+__exp -> _ Exp {% data => data[1] %}
+__char -> Character (_Exp | ElementNoSpace):? {% data => [].concat(...[data[0]].concat(data[1] ? [].concat(...data[1]) : [])) %}
 ElementSpace -> (Number | Character | Reserved | Symbol | Keyword | Tag | Discard) (_Exp | ElementNoSpace):? {% data => [].concat(...[data[0][0]].concat(data[1] ? [].concat(...data[1]) : [])) %}
-ElementNoSpace -> (Vector | List | String | Map | Set) (_:? Exp):? {% data => [data[0][0]].concat(data[1] ? data[1][1] : []) %}
+ElementNoSpace -> mapElementNoSpace (_:? Exp):? {% data => [data[0]].concat(data[1] ? data[1][1] : []) %}
 Element -> (Number | Character | Reserved | Symbol | Keyword | Vector | List | String | Map | Set) {% data => data[0][0] %}
 
 # Collections
@@ -14,7 +16,7 @@ Set -> "#{" _:? (Exp _:?):? "}" {% data => ({type: 'set', data: (data[2] ? data[
 
 # Tag
 Tag -> "#" Symbol _ Element {% (data, _l, reject) => {
-	if (data[1].data === "_") return reject;
+	if (data[1].data[0] === "_") return reject;
 	return {type: 'tag', tag: data[1].data, data: data[3]};
 }%}
 
@@ -48,7 +50,7 @@ symbol_piece_num -> [\-+.] (symbol_second_special symbol_mid:*):? {% data => dat
 symbol_basic -> symbol_start symbol_mid:* ("/" symbol_piece):? {% data => data[0] + data[1].join('') + (data[2] ? data[2].join('') : '') %}
 symbol_start -> letter | [*~_!?$%&=<>] {% data => data[0] %}
 symbol_mid -> letter | digit | [.*\!\-+_?$%&=<>:#] {% data => data[0] %}
-symbol_like_a_num -> [\-+.] (symbol_second_special symbol_mid:*):? ("/" symbol_piece):? {% 
+symbol_like_a_num -> [\-+.] (symbol_second_special symbol_mid:*):? ("/" symbol_piece):? {%
 	data => data[0] + (data[1] ? (data[1][0] + data[1][1].join('')) : '') + (data[2] ? data[2].join('') : '')
 %}
 symbol_second_special -> symbol_start | [\-+.:#] {% data => data[0] %}
@@ -87,13 +89,13 @@ MapElem -> mapKey mapValue  {% data => [[data[0][0], data[1][0]]].concat(data[1]
 mapKey -> (mapKeySpace | mapKeyNoSpace) {% data => data[0] %}
 mapValue -> (mapValueSpace | mapValueNoSpace) {% data => data[0][0] %}
 
-mapKeySpace -> mapElementSpace _ {% data => data[0] %}
-mapKeyNoSpace -> mapElementNoSpace _:? {% data => data[0] %}
+mapKeySpace -> (Discard _):* mapElementSpace _ {% data => data[1] %}
+mapKeyNoSpace -> (Discard _:?):* mapElementNoSpace _:? {% data => data[1] %}
 
-mapValueSpace -> mapElementSpace (_ MapElem):? {% data => [data[0]].concat(data[1] ? data[1][1] : []) %}
-mapValueNoSpace -> mapElementNoSpace (_:? MapElem):? {% data => [data[0]].concat(data[1] ? data[1][1] : []) %}
-mapElementNoSpace -> (Vector | List | String) {% data => data[0][0] %}
-mapElementSpace -> (Number | Character | Reserved | Symbol | Keyword) {% data => [].concat(...[data[0][0]])[0] %}
+mapValueSpace -> (Discard _):* mapElementSpace (_ MapElem):? {% data => [data[1]].concat(data[2] ? data[2][1] : []) %}
+mapValueNoSpace -> (Discard _:?):* mapElementNoSpace (_:? MapElem):? {% data => [data[1]].concat(data[2] ? data[2][1] : []) %}
+mapElementNoSpace -> (Vector | List | String | Map | Set) {% data => data[0][0] %}
+mapElementSpace -> (Number | Character | Reserved | Symbol | Keyword | Tag) {% data => [].concat(...[data[0][0]])[0] %}
 
 # Shared
 hexDigit -> [a-fA-F0-9] {% (data) => data[0] %}

@@ -11,7 +11,24 @@ const grammar = {
     { name: 'Exp$subexpression$1', symbols: ['ElementSpace'] },
     { name: 'Exp$subexpression$1', symbols: ['ElementNoSpace'] },
     { name: 'Exp', symbols: ['Exp$subexpression$1'], postprocess: data => [].concat(...data[0]) },
-    { name: '_Exp', symbols: ['_', 'Exp'], postprocess: data => data[1] },
+    { name: '_Exp', symbols: ['__exp'] },
+    { name: '_Exp', symbols: ['__char'], postprocess: data => data[0] },
+    { name: '__exp', symbols: ['_', 'Exp'], postprocess: data => data[1] },
+    { name: '__char$ebnf$1$subexpression$1', symbols: ['_Exp'] },
+    { name: '__char$ebnf$1$subexpression$1', symbols: ['ElementNoSpace'] },
+    { name: '__char$ebnf$1', symbols: ['__char$ebnf$1$subexpression$1'], postprocess: id },
+    {
+      name: '__char$ebnf$1',
+      symbols: [],
+      postprocess: function() {
+        return null;
+      }
+    },
+    {
+      name: '__char',
+      symbols: ['Character', '__char$ebnf$1'],
+      postprocess: data => [].concat(...[data[0]].concat(data[1] ? [].concat(...data[1]) : []))
+    },
     { name: 'ElementSpace$subexpression$1', symbols: ['Number'] },
     { name: 'ElementSpace$subexpression$1', symbols: ['Character'] },
     { name: 'ElementSpace$subexpression$1', symbols: ['Reserved'] },
@@ -29,7 +46,7 @@ const grammar = {
     {
       name: 'ElementSpace$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -38,16 +55,11 @@ const grammar = {
       symbols: ['ElementSpace$subexpression$1', 'ElementSpace$ebnf$1'],
       postprocess: data => [].concat(...[data[0][0]].concat(data[1] ? [].concat(...data[1]) : []))
     },
-    { name: 'ElementNoSpace$subexpression$1', symbols: ['Vector'] },
-    { name: 'ElementNoSpace$subexpression$1', symbols: ['List'] },
-    { name: 'ElementNoSpace$subexpression$1', symbols: ['String'] },
-    { name: 'ElementNoSpace$subexpression$1', symbols: ['Map'] },
-    { name: 'ElementNoSpace$subexpression$1', symbols: ['Set'] },
     { name: 'ElementNoSpace$ebnf$1$subexpression$1$ebnf$1', symbols: ['_'], postprocess: id },
     {
       name: 'ElementNoSpace$ebnf$1$subexpression$1$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -63,14 +75,14 @@ const grammar = {
     {
       name: 'ElementNoSpace$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
     {
       name: 'ElementNoSpace',
-      symbols: ['ElementNoSpace$subexpression$1', 'ElementNoSpace$ebnf$1'],
-      postprocess: data => [data[0][0]].concat(data[1] ? data[1][1] : [])
+      symbols: ['mapElementNoSpace', 'ElementNoSpace$ebnf$1'],
+      postprocess: data => [data[0]].concat(data[1] ? data[1][1] : [])
     },
     { name: 'Element$subexpression$1', symbols: ['Number'] },
     { name: 'Element$subexpression$1', symbols: ['Character'] },
@@ -87,7 +99,7 @@ const grammar = {
     {
       name: 'Vector$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -95,7 +107,7 @@ const grammar = {
     {
       name: 'Vector$ebnf$2$subexpression$1$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -107,7 +119,7 @@ const grammar = {
     {
       name: 'Vector$ebnf$2',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -120,7 +132,7 @@ const grammar = {
     {
       name: 'List$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -128,7 +140,7 @@ const grammar = {
     {
       name: 'List$ebnf$2$subexpression$1$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -137,7 +149,7 @@ const grammar = {
     {
       name: 'List$ebnf$2',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -150,7 +162,7 @@ const grammar = {
     {
       name: 'Map$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -158,7 +170,7 @@ const grammar = {
     {
       name: 'Map$ebnf$2$subexpression$1$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -170,7 +182,7 @@ const grammar = {
     {
       name: 'Map$ebnf$2',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -190,7 +202,7 @@ const grammar = {
     {
       name: 'Set$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -198,7 +210,7 @@ const grammar = {
     {
       name: 'Set$ebnf$2$subexpression$1$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -207,7 +219,7 @@ const grammar = {
     {
       name: 'Set$ebnf$2',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -220,7 +232,7 @@ const grammar = {
       name: 'Tag',
       symbols: [{ literal: '#' }, 'Symbol', '_', 'Element'],
       postprocess: (data, _l, reject) => {
-        if (data[1].data === '_') return reject;
+        if (data[1].data[0] === '_') return reject;
         return { type: 'tag', tag: data[1].data, data: data[3] };
       }
     },
@@ -235,7 +247,7 @@ const grammar = {
     {
       name: 'Discard$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -325,7 +337,7 @@ const grammar = {
     {
       name: 'symbol$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -369,7 +381,7 @@ const grammar = {
     {
       name: 'symbol_piece_num$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -395,7 +407,7 @@ const grammar = {
     {
       name: 'symbol_basic$ebnf$2',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -429,7 +441,7 @@ const grammar = {
     {
       name: 'symbol_like_a_num$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -445,7 +457,7 @@ const grammar = {
     {
       name: 'symbol_like_a_num$ebnf$2',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -535,7 +547,7 @@ const grammar = {
     {
       name: 'Integer$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -553,7 +565,7 @@ const grammar = {
     {
       name: 'float$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -566,7 +578,7 @@ const grammar = {
     {
       name: 'float$ebnf$2',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -579,7 +591,7 @@ const grammar = {
     {
       name: 'float$ebnf$3',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -610,7 +622,7 @@ const grammar = {
     {
       name: 'ex$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
@@ -656,70 +668,134 @@ const grammar = {
     { name: 'mapValue$subexpression$1', symbols: ['mapValueSpace'] },
     { name: 'mapValue$subexpression$1', symbols: ['mapValueNoSpace'] },
     { name: 'mapValue', symbols: ['mapValue$subexpression$1'], postprocess: data => data[0][0] },
-    { name: 'mapKeySpace', symbols: ['mapElementSpace', '_'], postprocess: data => data[0] },
-    { name: 'mapKeyNoSpace$ebnf$1', symbols: ['_'], postprocess: id },
+    { name: 'mapKeySpace$ebnf$1', symbols: [] },
+    { name: 'mapKeySpace$ebnf$1$subexpression$1', symbols: ['Discard', '_'] },
+    {
+      name: 'mapKeySpace$ebnf$1',
+      symbols: ['mapKeySpace$ebnf$1', 'mapKeySpace$ebnf$1$subexpression$1'],
+      postprocess: function arrpush(d) {
+        return d[0].concat([d[1]]);
+      }
+    },
+    {
+      name: 'mapKeySpace',
+      symbols: ['mapKeySpace$ebnf$1', 'mapElementSpace', '_'],
+      postprocess: data => data[1]
+    },
+    { name: 'mapKeyNoSpace$ebnf$1', symbols: [] },
+    { name: 'mapKeyNoSpace$ebnf$1$subexpression$1$ebnf$1', symbols: ['_'], postprocess: id },
+    {
+      name: 'mapKeyNoSpace$ebnf$1$subexpression$1$ebnf$1',
+      symbols: [],
+      postprocess: function() {
+        return null;
+      }
+    },
+    {
+      name: 'mapKeyNoSpace$ebnf$1$subexpression$1',
+      symbols: ['Discard', 'mapKeyNoSpace$ebnf$1$subexpression$1$ebnf$1']
+    },
     {
       name: 'mapKeyNoSpace$ebnf$1',
+      symbols: ['mapKeyNoSpace$ebnf$1', 'mapKeyNoSpace$ebnf$1$subexpression$1'],
+      postprocess: function arrpush(d) {
+        return d[0].concat([d[1]]);
+      }
+    },
+    { name: 'mapKeyNoSpace$ebnf$2', symbols: ['_'], postprocess: id },
+    {
+      name: 'mapKeyNoSpace$ebnf$2',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
     {
       name: 'mapKeyNoSpace',
-      symbols: ['mapElementNoSpace', 'mapKeyNoSpace$ebnf$1'],
-      postprocess: data => data[0]
+      symbols: ['mapKeyNoSpace$ebnf$1', 'mapElementNoSpace', 'mapKeyNoSpace$ebnf$2'],
+      postprocess: data => data[1]
     },
-    { name: 'mapValueSpace$ebnf$1$subexpression$1', symbols: ['_', 'MapElem'] },
+    { name: 'mapValueSpace$ebnf$1', symbols: [] },
+    { name: 'mapValueSpace$ebnf$1$subexpression$1', symbols: ['Discard', '_'] },
     {
       name: 'mapValueSpace$ebnf$1',
-      symbols: ['mapValueSpace$ebnf$1$subexpression$1'],
+      symbols: ['mapValueSpace$ebnf$1', 'mapValueSpace$ebnf$1$subexpression$1'],
+      postprocess: function arrpush(d) {
+        return d[0].concat([d[1]]);
+      }
+    },
+    { name: 'mapValueSpace$ebnf$2$subexpression$1', symbols: ['_', 'MapElem'] },
+    {
+      name: 'mapValueSpace$ebnf$2',
+      symbols: ['mapValueSpace$ebnf$2$subexpression$1'],
       postprocess: id
     },
     {
-      name: 'mapValueSpace$ebnf$1',
+      name: 'mapValueSpace$ebnf$2',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
     {
       name: 'mapValueSpace',
-      symbols: ['mapElementSpace', 'mapValueSpace$ebnf$1'],
-      postprocess: data => [data[0]].concat(data[1] ? data[1][1] : [])
+      symbols: ['mapValueSpace$ebnf$1', 'mapElementSpace', 'mapValueSpace$ebnf$2'],
+      postprocess: data => [data[1]].concat(data[2] ? data[2][1] : [])
     },
+    { name: 'mapValueNoSpace$ebnf$1', symbols: [] },
     { name: 'mapValueNoSpace$ebnf$1$subexpression$1$ebnf$1', symbols: ['_'], postprocess: id },
     {
       name: 'mapValueNoSpace$ebnf$1$subexpression$1$ebnf$1',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
     {
       name: 'mapValueNoSpace$ebnf$1$subexpression$1',
-      symbols: ['mapValueNoSpace$ebnf$1$subexpression$1$ebnf$1', 'MapElem']
+      symbols: ['Discard', 'mapValueNoSpace$ebnf$1$subexpression$1$ebnf$1']
     },
     {
       name: 'mapValueNoSpace$ebnf$1',
-      symbols: ['mapValueNoSpace$ebnf$1$subexpression$1'],
+      symbols: ['mapValueNoSpace$ebnf$1', 'mapValueNoSpace$ebnf$1$subexpression$1'],
+      postprocess: function arrpush(d) {
+        return d[0].concat([d[1]]);
+      }
+    },
+    { name: 'mapValueNoSpace$ebnf$2$subexpression$1$ebnf$1', symbols: ['_'], postprocess: id },
+    {
+      name: 'mapValueNoSpace$ebnf$2$subexpression$1$ebnf$1',
+      symbols: [],
+      postprocess: function() {
+        return null;
+      }
+    },
+    {
+      name: 'mapValueNoSpace$ebnf$2$subexpression$1',
+      symbols: ['mapValueNoSpace$ebnf$2$subexpression$1$ebnf$1', 'MapElem']
+    },
+    {
+      name: 'mapValueNoSpace$ebnf$2',
+      symbols: ['mapValueNoSpace$ebnf$2$subexpression$1'],
       postprocess: id
     },
     {
-      name: 'mapValueNoSpace$ebnf$1',
+      name: 'mapValueNoSpace$ebnf$2',
       symbols: [],
-      postprocess: function(_d) {
+      postprocess: function() {
         return null;
       }
     },
     {
       name: 'mapValueNoSpace',
-      symbols: ['mapElementNoSpace', 'mapValueNoSpace$ebnf$1'],
-      postprocess: data => [data[0]].concat(data[1] ? data[1][1] : [])
+      symbols: ['mapValueNoSpace$ebnf$1', 'mapElementNoSpace', 'mapValueNoSpace$ebnf$2'],
+      postprocess: data => [data[1]].concat(data[2] ? data[2][1] : [])
     },
     { name: 'mapElementNoSpace$subexpression$1', symbols: ['Vector'] },
     { name: 'mapElementNoSpace$subexpression$1', symbols: ['List'] },
     { name: 'mapElementNoSpace$subexpression$1', symbols: ['String'] },
+    { name: 'mapElementNoSpace$subexpression$1', symbols: ['Map'] },
+    { name: 'mapElementNoSpace$subexpression$1', symbols: ['Set'] },
     {
       name: 'mapElementNoSpace',
       symbols: ['mapElementNoSpace$subexpression$1'],
@@ -730,6 +806,7 @@ const grammar = {
     { name: 'mapElementSpace$subexpression$1', symbols: ['Reserved'] },
     { name: 'mapElementSpace$subexpression$1', symbols: ['Symbol'] },
     { name: 'mapElementSpace$subexpression$1', symbols: ['Keyword'] },
+    { name: 'mapElementSpace$subexpression$1', symbols: ['Tag'] },
     {
       name: 'mapElementSpace',
       symbols: ['mapElementSpace$subexpression$1'],

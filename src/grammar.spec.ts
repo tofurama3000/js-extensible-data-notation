@@ -131,6 +131,21 @@ describe('grammar', () => {
     expect(parse('#uuid "f81d4fae-7dec-11d0-a765-00a0c91e6bf6"')).toBeTruthy();
   });
 
+  it('can parse maps', () => {
+    expect(parse('{#_ hello 4 5, [6 7] [9 10]}')).toBeTruthy();
+    expect(parse('{4 5, [6 7] [9 10] "harry" {:surname "Potter"}}')).toBeTruthy();
+    expect(
+      parse('{4 5, [6 7] #inst "1985-04-12T23:20:50.52Z" "harry" #{:surname "Potter"}}')
+    ).toBeTruthy();
+  });
+
+  it('can parse sets', () => {
+    expect(parse('{4 5, [6 7] [9 10] "harry" {:surname "Potter"}}')).toBeTruthy();
+    expect(
+      parse('{4 5, #inst "1985-04-12T23:20:50.52Z" [9 10] "harry" #{:surname "Potter"}}')
+    ).toBeTruthy();
+  });
+
   it('passes nearley tests', () => {
     expect(parse('#{23 232 2333 [2] [3]}')).toBeTruthy();
     expect(parse('[,,]#{ { ,, 0, ,\\_,[] true 0, 0N }}')).toBeTruthy();

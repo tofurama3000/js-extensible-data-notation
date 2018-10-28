@@ -1,5 +1,6 @@
+import '@babel/polyfill';
 import { Edn } from './interpreter';
-import { keyword, symbol, tag } from './types';
+import { EdnMap, EdnSet, keyword, map, set, symbol, tag } from './types';
 
 describe('Edn.parse', () => {
   it('can parse symbols', () => {
@@ -24,6 +25,38 @@ describe('Edn.parse', () => {
 
   it('can parse discard', () => {
     expect(Edn.parse('#_h #_ W')).toEqual([]);
+  });
+
+  it('can parse maps', () => {
+    const parsed = Edn.parse('{4 5, [6 7] [9 10]}')[0] as EdnMap;
+    expect(parsed).toEqual(map([4, 5, [6, 7], [9, 10]]));
+    expect(parsed.get(4)).toBe(5);
+    expect(parsed.get([6, 7])).toEqual([9, 10]);
+    expect(parsed.get('bob')).toBeNull();
+  });
+
+  it('can parse complicated maps', () => {
+    const parsed = Edn.parse('{4 5, [6 7] [9 10] "harry" {:surname "Potter"}}')[0] as EdnMap;
+    expect(parsed).toEqual(
+      map([4, 5, [6, 7], [9, 10], 'harry', map([keyword('surname'), 'Potter'])])
+    );
+    expect(parsed.get(4)).toBe(5);
+    expect(parsed.get([6, 7])).toEqual([9, 10]);
+    expect(parsed.get('bob')).toBeNull();
+  });
+
+  it('can parse sets', () => {
+    const parsed = Edn.parse('#{4 5,bob [6 7] [9 10] #{1 2}}')[0] as EdnSet;
+    expect(parsed).toEqual(set([4, 5, symbol('bob'), [6, 7], [9, 10], set([1, 2])]));
+    expect(parsed.has(4)).toBe(true);
+    expect(parsed.has([6, 7])).toBe(true);
+    expect(parsed.has('bob')).toBe(false);
+    expect(parsed.has(symbol('bob'))).toBe(true);
+  });
+
+  it('can parse tags', () => {
+    const parsed = Edn.parse('#inst "1985-04-12T23:20:50.52Z"')[0] as EdnSet;
+    expect(parsed).toEqual(tag('inst', '1985-04-12T23:20:50.52Z'));
   });
 
   it('can parse something complicated', () => {
