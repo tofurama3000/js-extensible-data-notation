@@ -1,13 +1,8 @@
-import { parse } from './grammar';
 import { keyword, map, set, symbol, tag } from './types';
 import { flatMap } from 'tofu-js/dist/arrays';
 import { isArray } from 'tofu-js/dist/is';
 
-export const Edn = {
-  parse: (str: string) => processTokens(parse(str))
-};
-
-function processTokens(tokens: any[] | boolean) {
+export function processTokens(tokens: any[] | boolean) {
   if (!isArray(tokens)) {
     throw 'Invalid EDN string';
   }

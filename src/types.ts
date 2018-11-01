@@ -10,7 +10,7 @@ export class EdnKeyword {
   }
 
   public get keyword() {
-    return this.keyword;
+    return this._keyword;
   }
 
   public set keyword(keyword: string) {
@@ -137,7 +137,7 @@ function toString(input: any) {
   return JSON.stringify(input);
 }
 
-function type(input: any) {
+export function type(input: any) {
   if (isNil(input)) {
     return 'Nil';
   } else if (isNumber(input)) {
