@@ -2,7 +2,8 @@
   "name": "js-extensible-data-notation",
   "version": "0.0.1",
   "description": "JavaScript parser/writer for extensible data notation",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "test": "jest",
     "build": "webpack --mode=development",
