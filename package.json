@@ -27,7 +27,6 @@
     "babel-loader": "^8.0.4",
     "babel-plugin-tailcall-optimization": "^1.0.13",
     "jest": "^23.6.0",
-    "nearley": "^2.15.1",
     "prettier": "^1.14.3",
     "ts-jest": "^23.10.4",
     "ts-loader": "^5.2.1",
@@ -38,6 +37,7 @@
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
+    "nearley": "^2.15.1",
     "tofu-js": "git://github.com/tofurama3000/tofu-js.git"
   }
 }
