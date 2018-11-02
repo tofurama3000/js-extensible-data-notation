@@ -1,3 +1,1 @@
-export declare const Edn: {
-    parse: (str: string) => any;
-};
+export declare function processTokens(tokens: any[] | boolean): any[];

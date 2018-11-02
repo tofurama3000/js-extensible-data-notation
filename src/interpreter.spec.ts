@@ -1,5 +1,5 @@
 import '@babel/polyfill';
-import { Edn } from './interpreter';
+import { Edn } from './index';
 import { EdnMap, EdnSet, keyword, map, set, symbol, tag } from './types';
 
 describe('Edn.parse', () => {
