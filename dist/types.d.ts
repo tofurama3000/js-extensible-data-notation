@@ -36,7 +36,7 @@ export declare class EdnSet {
     values: () => IterableIterator<any>;
     [Symbol.iterator]: () => IterableIterator<any>;
 }
-export declare function type(input: any): "Symbol" | "Map" | "Set" | "Number" | "Keyword" | "Tag" | "Vector" | "String" | "Nil" | "Other";
+export declare function type(input: any): "Number" | "Symbol" | "Keyword" | "Tag" | "Vector" | "String" | "Map" | "Set" | "Nil" | "Other";
 export declare const keyword: (str: string) => EdnKeyword;
 export declare const symbol: (str: string) => EdnSymbol;
 export declare const set: (data: any[]) => EdnSet;
