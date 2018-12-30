@@ -1,6 +1,7 @@
 import { keyword, map, set, symbol, tag } from './types';
 import { flatMap } from 'tofu-js/dist/arrays';
 import { isArray } from 'tofu-js/dist/is';
+import { unescapeStr } from './strings';
 
 export function processTokens(tokens: any[] | boolean) {
   if (!isArray(tokens)) {
@@ -17,6 +18,7 @@ function processToken(token: any): any {
     case 'int':
       return parseInt(data);
     case 'string':
+      return unescapeStr(data);
     case 'char':
       return data;
     case 'keyword':
