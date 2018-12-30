@@ -8,6 +8,39 @@ export function processTokens(tokens: any[] | boolean) {
   return tokens.filter(t => t && t.type !== 'discard').map(processToken);
 }
 
+function unescapeChar(str: string): string {
+  if (!str.length) {
+    return '\\';
+  }
+  const char = str[0];
+  const rest = str.substr(1);
+  switch (char.toLowerCase()) {
+    case 'n':
+      return `\n${rest}`;
+    case 'r':
+      return `\r${rest}`;
+    case 't':
+      return `\t${rest}`;
+    case '\\':
+      return `\\${rest}`;
+    case "'":
+      return `\'${rest}`;
+    case '"':
+      return `"${rest}`;
+    case 'b':
+      return `\b${rest}`;
+    case 'f':
+      return `\f${rest}`;
+    default:
+      return str;
+  }
+}
+
+function unescapeStr(str: string): string {
+  const parts = str.split('\\');
+  return parts.map((p, i) => (i ? unescapeChar(p) : p)).join('');
+}
+
 function processToken(token: any): any {
   const { data, type, tag } = token;
   switch (type) {
@@ -16,6 +49,7 @@ function processToken(token: any): any {
     case 'int':
       return parseInt(data);
     case 'string':
+      return unescapeStr(data);
     case 'char':
       return data;
     case 'keyword':
