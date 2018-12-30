@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var arrays_1 = require("tofu-js/dist/arrays");
 var is_1 = require("tofu-js/dist/is");
+var strings_1 = require("./strings");
 function processTokens(tokens) {
     if (!is_1.isArray(tokens)) {
         throw 'Invalid EDN string';
@@ -17,6 +18,7 @@ function processToken(token) {
         case 'int':
             return parseInt(data);
         case 'string':
+            return strings_1.unescapeStr(data);
         case 'char':
             return data;
         case 'keyword':
