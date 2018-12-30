@@ -17,7 +17,6 @@ function processToken(token: any): any {
     case 'int':
       return parseInt(data);
     case 'string':
-      return unescapeStr(data);
     case 'char':
       return data;
     case 'keyword':
