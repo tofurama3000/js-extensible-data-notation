@@ -25,6 +25,7 @@ function processToken(token: any): any {
     case 'symbol':
       return data;
     case 'boolean':
+    case 'bool':
       return data === 'true';
     case 'tag':
       return { tag, value: processToken(data) };
