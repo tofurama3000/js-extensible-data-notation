@@ -26,7 +26,7 @@ function processToken(token: any): any {
       return data;
     case 'boolean':
     case 'bool':
-      return data === 'true';
+      return data === 'true' || data === true;
     case 'tag':
       return { tag, value: processToken(data) };
     case 'list':
