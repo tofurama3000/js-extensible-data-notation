@@ -23,6 +23,7 @@ function unescapeChar(str) {
             return "\b" + rest;
         case 'f':
             return "\f" + rest;
+        /// TODO: Unescape unicode characters
         default:
             return str;
     }
